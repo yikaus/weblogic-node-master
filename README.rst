@@ -44,15 +44,7 @@ Installation
 Summary
 -------
 
-wlnm (Weblogic node master) is command tool to manage local weblogic installation and server instance ,node manager . It is based on metadata searching
-
-from config.xml and nodemanager.properties . You can use this tool directly without any configuration or enviroment setup . The tool itself will 
-
-gathering all weblogic metadata infomations by go through all weblogic directories. It provides the function like list all domains , installation , servers 
-
-and nodemanager information , start/kill local server instance also remote managedserver which through buildin WLST script. Welcome to test /use in your 
-
-dev and test enviroment . As it is still in early version better not to use in production enviroment .
+wlnm (Weblogic node master) is command tool to manage local weblogic installation and server instance ,node manager . It is based on metadata searching from config.xml and nodemanager.properties . You can use this tool directly without any configuration or enviroment setup . The tool itself will gathering all weblogic metadata infomations by go through all weblogic directories. It provides the function like list all domains , installation , servers and nodemanager information , start/kill local server instance also remote managedserver which through buildin WLST script. Welcome to test /use in your dev and test enviroment . As it is still in early version better not to use in production enviroment .
 
 Usage Examples::
 
