@@ -22,17 +22,21 @@ Installation
 2. Install from source.
 
     $ wget --no-check-certificate https://pypi.python.org/packages/source/w/wlnm/wlnm-0.1.0.tar.gz
+    
     $ tar xvf wlnm-0.1.0.tar.gz
+    
     $ sudo python setup.py install	
 
 3. Install from RPM (build on Centos 64bit)
     
     $ wget --no-check-certificate https://pypi.python.org/packages/2.6/w/wlnm/wlnm-0.1.0-1.noarch.rpm
+    
     $ sudo rpm -Uvh wlnm-0.1.0-1.noarch.rpm  
 
 4. Run directly from git source if you don't have sudo access
     
     $ git clone https://github.com/yikaus/wlnm
+    
     $ ./wlnm/wlnm/wlnm.py
 
 
