@@ -1,5 +1,5 @@
-wlnm 0.1.0
-==========
+wlnm 0.1.0 (Weblogic Node Master)
+======================
 
 .. contents::
 
