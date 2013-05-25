@@ -23,7 +23,7 @@ import argparse
 import socket
 import readline
 
-import inputer,search,util
+import inputer,search,wlnmd,wlnmc
 
 
 
@@ -31,57 +31,64 @@ logging.basicConfig(level=logging.INFO,
                     format='%(asctime)s %(levelname)s %(message)s')
 
 
+def local_run():
 
-def checkinit():
-    if os.path.isfile(util.wlnm_data_file):
-	#print 'initialised'
-	pass
-    else:
-        if raw_input("For the first time use weblogic node master, it  need to gather weblogic infos on this machine , proceed [y/n] ?") == 'y' :
-		#print 'Search local weblogic domains'
-		util.creatProfileDir()
-		search.searchAll()
-	else:
-		print 'Weblogic node master terminated .'
-		print ""
-		sys.exit(0)
-
-def runcmd(command,args):
-	if command not in inputer.cmddict.keys():
-		print 'Invilad command! Press Tab key or use help command list all avaiable command.'
-		print ''
-	else:
-		if not args:
-			inputer.cmddict[command]()
-		else:
-			inputer.cmddict[command](args)
-
-
-
-
-
-def main():
-    print ""
-    checkinit()
-    #parser = argparse.ArgumentParser()
-    #parser.add_argument('-n', '--new', help='creates a new object')
-
-    #util.help()
     print "Weblogic Node Master"
     print ""
     print "Type help to load help page ."
     print ""
 
     command =''
+    #remoteCMD = False
     readline.parse_and_bind("tab: complete")
-    readline.set_completer(inputer.complete)
-    while command is not 'quit' :
-	i_input = raw_input ('%s>>' % socket.gethostname())
+    while True :
+        #remoteCMD = inputer.remote
+	readline.set_completer(inputer.complete)
+	if inputer.remote :
+		i_input = raw_input ('%s>>' % wlnmc.host)
+	else:
+		i_input = raw_input ('%s(localhost)>>' % socket.gethostname())
 	if not i_input : continue
 	command = i_input.split()[0]
 	args=i_input.split()[1:]
-	runcmd(command,args)
+	inputer.validcmd(command,args,inputer.remote)
+	
+	'''
+	if command == "connect" :
+		remoteCMD = True
+	if command == "disconnect" :
+		remoteCMD = False
+	'''
     print "Bye"
+
+
+
+def main():
+    print 
+    
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-d', '--daemon', action="store_true" , dest='daemon', default=False, help='Run wlnm in daemon mode')
+    parser.add_argument('-p', '--port', dest='listenPort', help='Listen port to run wlnm as daemon')
+    parser.add_argument('-k', '--kill', action="store_true", dest='killwlnmd', help='Kill wlnm daemon process')
+    args = parser.parse_args()
+    
+    if args.daemon or args.killwlnmd :
+	search.checkinit(True)
+    else :
+	search.checkinit(False)
+    
+    if  args.daemon:
+	if args.listenPort :
+		#print args.listenPort 
+		
+		wlnmd.runDaemon(int(args.listenPort))
+	else:
+		print "Port number need to provide , eg. -p 9099 or --port 9099"
+	
+    elif  args.killwlnmd:
+	wlnmd.stopDaemon()
+    else :
+	local_run()
 
 
 if __name__ == "__main__":

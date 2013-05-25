@@ -15,7 +15,11 @@ License  : BSD
 import socket
 import shelve
 from os.path import expanduser
+from cStringIO import StringIO
 import os
+import sys
+import base64
+
 
 wlnm_data_file = "%s/.wlnm/wlnm.dat" % expanduser("~")
 
@@ -23,6 +27,7 @@ def creatProfileDir():
 	pdir = "%s/.wlnm" % expanduser("~")
 	if not os.path.exists(pdir):
 		os.makedirs(pdir,0700)
+
 
 def help():
 	print ">>>>>> help >>>>>>"
@@ -127,6 +132,13 @@ def checkport(port):
 		return False
 	s.close()
 
+def initDB():
+	db = shelve.open(wlnm_data_file,"c")
+	db['local_wls'] = {}
+	db['local_domains'] = {}
+	db['wls_servers'] = {}
+	db.close()
+
 def loadDB(wlss=False,domain=False,server=False):
 	
 	db = shelve.open(wlnm_data_file, "r")
@@ -194,3 +206,18 @@ def saveDB(wlss=False,domain=False,server=False,data=None):
 
 	db.close()
 
+
+
+def redirectStdout():
+	old_stdout = sys.stdout
+	sys.stdout = mystdout = StringIO()
+	return mystdout,old_stdout
+
+def finishRedirectStdout(old_stdout):
+	sys.stdout = old_stdout
+
+def decode_output(my_out):
+	return base64.b64decode(my_out)
+
+def encode_output(my_out):
+	return base64.b64encode(my_out)

@@ -1,7 +1,13 @@
-wlnm 0.1.0 (Weblogic Node Master)
+wlnm 0.2.0 (Weblogic Node Master)
 ======================
 
 .. contents::
+
+Changes
+-------
+**0.2.0**: add remote contol ablitity , which can be used multi-machine weblogic admin
+
+**0.1.0**: initial drop
 
 Requirements
 -------------
@@ -21,17 +27,17 @@ Installation
 
 2. Install from source.
 
-    $ wget --no-check-certificate https://pypi.python.org/packages/source/w/wlnm/wlnm-0.1.0.tar.gz
+    $ wget --no-check-certificate https://pypi.python.org/packages/source/w/wlnm/wlnm-0.2.0.tar.gz
     
-    $ tar xvf wlnm-0.1.0.tar.gz
+    $ tar xvf wlnm-<version>.tar.gz
     
     $ sudo python setup.py install	
 
 3. Install from RPM (build on Centos 64bit)
     
-    $ wget --no-check-certificate https://pypi.python.org/packages/2.6/w/wlnm/wlnm-0.1.0-1.noarch.rpm
+    $ wget --no-check-certificate https://pypi.python.org/packages/2.6/w/wlnm/wlnm-0.2.0-1.noarch.rpm
     
-    $ sudo rpm -Uvh wlnm-0.1.0-1.noarch.rpm  
+    $ sudo rpm -Uvh wlnm-<version>.noarch.rpm  
 
 4. Run directly from git source if you don't have sudo access
     
@@ -48,10 +54,29 @@ wlnm (Weblogic node master) is command tool to manage local weblogic installatio
 
 Usage Examples::
 
+1. Run wlnm as daemon process and accept client request
+    
+    $ wlnm -d -p <portNumber>
+    or 
+    $ wlnm --daemon --port <portNumber>
+	Start wlnm as daemon process listen on the port <portNumber>
+
+    $ wlnm -k
+    or 
+    $ wlnm --kill
+	Kill wlnm daemon process
+
+2. Run wlnm locally or as client
+
 The tool is used as interactive command mode , you need to enter wlnm prompt then use below command 
 
     
     wlnm
+    >> connect <hostname/ip> <port>
+	 Connect remote wlnm daemon process
+
+    >> disconnect <hostname/ip> <port>
+	 Disconnect remote wlnm daemon connection
 
     >> ls
          List all weblogic domains with servers belong to it.
@@ -97,9 +122,6 @@ The tool is used as interactive command mode , you need to enter wlnm prompt the
 
 
 
-Changes
--------
-**0.1.0**: initial drop
 
 
 

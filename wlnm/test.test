@@ -1,0 +1,45 @@
+'''
+#import wlnmc
+#import xmlrpclib
+
+import util
+
+def searchAll():
+	mystdout,old_stdout = util.redirectStdout()
+	search.searchAll()
+	util.finishRedirectStdout(old_stdout)
+	#util.encode_output(mystdout.getvalue()
+
+print 'aaa'
+
+
+import sys
+from cStringIO import StringIO
+
+def redirectStdout():
+	old_stdout = sys.stdout
+	sys.stdout = mystdout = StringIO()
+	return mystdout,old_stdout
+
+def finishRedirectStdout(old_stdout):
+	sys.stdout = old_stdout
+
+mystdout,old_stdout = redirectStdout ()
+
+print 'asdasd'
+
+print 'dddd'
+
+finishRedirectStdout(old_stdout)
+
+print 'xxxxxx'
+
+print mystdout.getvalue()
+'''
+
+import os
+import search
+import sys 
+print os.path.dirname(search.__file__)
+
+print sys.modules[self.__class__.__module__].__file__

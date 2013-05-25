@@ -16,13 +16,12 @@ License  : BSD
 import subprocess
 import logging
 import os
-import wlnm
 import search
 
-#logging.basicConfig(level=logging.INFO)
-logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(level=logging.INFO)
+#logging.basicConfig(level=logging.DEBUG)
 
-WLSTPATH = os.path.dirname(wlnm.__file__)
+WLSTPATH = os.path.dirname(search.__file__)
 
 def startServers(namelist):
 	logging.debug ("namelist is %s" % namelist)
@@ -38,14 +37,19 @@ def startServer(name):
 	if wlsHome :
 		cmd_str = '%s/common/bin/wlst.sh %s/wlst/startwls.py -u %s -p %s -a %s -s %s' % (wlsHome,WLSTPATH,user,pwd,adminurl,name)
 		proc = subprocess.Popen(cmd_str, shell=True, stdout=subprocess.PIPE)
+		
+		print "%s starting request has been sent , will be in running status shortly. " % name
+		'''
+		# not print output in this way ,as start may takes time
 		while proc.poll() is None:
 		    output = proc.stdout.readline()
 		    if output.startswith('CONNECT TO ADMIN URL') or flag:
 			flag = True
 		    if flag:
 			print output
+		'''
 	else:
-		print "could not find %s in local db , make sure you spell correct" % name
+		print "could not find %s  , make sure you spell correct" % name
 	
 
 def stopServers(namelist):
@@ -67,7 +71,7 @@ def stopServer(name):
 		    if flag:
 			print output
 	else:
-		print "could not find %s in local db , make sure you spell correct" % name
+		print "could not find %s , make sure you spell correct" % name
 
 
 

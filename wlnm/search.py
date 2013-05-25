@@ -17,10 +17,12 @@ import os
 import logging
 import xml.etree.ElementTree as ET
 import subprocess
+import sys
 
 import util
 import monitor
 import wls
+
 
 logging.basicConfig(level=logging.INFO)
 #logging.basicConfig(level=logging.DEBUG)
@@ -103,7 +105,7 @@ def getwls(name):
 				pwd = domainsDB[idomain]["pwd"]
 	else:
 		#print "could not find such server in local db , make sure you spell correct"
-		return
+		return ('','','','')
 
 	for key in wls:
 		if version == wlsDB[key]["version"]:
@@ -235,8 +237,23 @@ def searchNM(wlsHome):
 	return port			
 
 
-	
+def checkinit(daemon):
+    if not os.path.isfile(util.wlnm_data_file):
+	util.creatProfileDir()
+        if raw_input("For the first time use weblogic node master, it  need to gather weblogic infos on this machine , proceed [y/n] ?") == 'y' :
+		#print 'Search local weblogic domains'
+		searchAll()
+	else:
+		if daemon :
+			print "If you run a daemon service must choose Y , quit now."
+			print ""
+			sys.exit()
+		else :
+			util.initDB()
+			print 'Weblogic node master run as client mode ,use connect command to connect target machine.'
+			print ""	
 
 #print searchNM("/bea/1035/wlserver_10.3")
 #searchwls()
 #showWLS()
+#getwls('dsada')
