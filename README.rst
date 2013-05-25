@@ -57,12 +57,16 @@ Usage Examples::
 1. Run wlnm as daemon process and accept client request
     
     $ wlnm -d -p <portNumber>
+    
     or 
+    
     $ wlnm --daemon --port <portNumber>
 	Start wlnm as daemon process listen on the port <portNumber>
 
     $ wlnm -k
+    
     or 
+    
     $ wlnm --kill
 	Kill wlnm daemon process
 
