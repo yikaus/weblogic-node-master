@@ -4,7 +4,7 @@
 from setuptools import setup, find_packages
 setup(
     name = "wlnm",
-    version = "0.2.0",
+    version = "1.0.0",
     packages = find_packages(),
     
 
@@ -29,6 +29,8 @@ setup(
     entry_points = {
         'console_scripts': [
             'wlnm = wlnm.wlnm:main',
+	    'wlns = wlnm.wlns:main',
+	    'wlna = wlnm.wlna:main',
         ],
     }
 )
