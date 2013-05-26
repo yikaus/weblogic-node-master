@@ -14,24 +14,26 @@ License  : BSD
 
 import socket
 import shelve
-from os.path import expanduser
 from cStringIO import StringIO
 import os
 import sys
 import base64
 
 
-wlnm_data_file = "%s/.wlnm/wlnm.dat" % expanduser("~")
 
-def creatProfileDir():
-	pdir = "%s/.wlnm" % expanduser("~")
-	if not os.path.exists(pdir):
-		os.makedirs(pdir,0700)
 
 
 def help():
 	print ">>>>>> help >>>>>>"
 	print ""
+	print ""
+	print "lsm			List all registered machines. "
+	print ""
+	print "use [machineName]	use certain machine to operate. "
+	print ""
+	print "disconnect		disconnect current session. "
+	print ""
+	print "init [machineName] [agentPort]		register remote machine and gather weblogic information. "
 	print ""
 	print "ls [domainName]		List all weblogic domains/servers or only list one domain. "
 	print ""
@@ -42,8 +44,6 @@ def help():
 	print "lswls			List all version weblogic installed on local machine."
 	print ""
 	print "kill [port|servername]	Kill process by port number or servername."
-	print ""
-	print "init			Reinitialize weblogic and domain info on local machine."
 	print ""
 	print "nmstart [port]		start weblogic node manager by port."
 	print ""
@@ -122,15 +122,19 @@ def checkports(port):
 			#return False
 		s.close()
 
-def checkport(port):
-	s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-	if s.connect_ex(('localhost', int(port)))==0:
-		#print "port %s is Opened" % iport
-		return True
-	else:
-		#print "port %s is Closed" % iport
+def checkport(port,host="localhost"):
+	try :
+		s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+		if s.connect_ex((host, int(port)))==0:
+			#print "port %s is Opened" % iport
+			return True
+		else:
+			#print "port %s is Closed" % iport
+			return False
+		s.close()
+	except :
+		# any wrong return false , eg. host is not resolved.
 		return False
-	s.close()
 
 def initDB():
 	db = shelve.open(wlnm_data_file,"c")
@@ -221,3 +225,10 @@ def decode_output(my_out):
 
 def encode_output(my_out):
 	return base64.b64encode(my_out)
+
+def RepresentsInt(s):
+    try: 
+        int(s)
+        return True
+    except ValueError:
+        return False

@@ -29,27 +29,27 @@ def startServers(namelist):
 		startServer(name)
 
 
-def startServer(name):
+def startServer(args):
+
+	(adminurl,wlsHome,user,pwd,name) = args
 	logging.debug ("name is %s" % name)
 	flag = False
-	(adminurl,wlsHome,user,pwd) = search.getwls(name)
+	
+	
+	cmd_str = '%s/common/bin/wlst.sh %s/wlst/startwls.py -u %s -p %s -a %s -s %s' % (wlsHome,WLSTPATH,user,pwd,adminurl,name)
+	proc = subprocess.Popen(cmd_str, shell=True, stdout=subprocess.PIPE)
+	
+	print "%s starting request has been sent , will be in running status shortly. " % name
+	'''
+	# not print output in this way ,as start may takes time
+	while proc.poll() is None:
+	    output = proc.stdout.readline()
+	    if output.startswith('CONNECT TO ADMIN URL') or flag:
+		flag = True
+	    if flag:
+		print output
+	'''
 
-	if wlsHome :
-		cmd_str = '%s/common/bin/wlst.sh %s/wlst/startwls.py -u %s -p %s -a %s -s %s' % (wlsHome,WLSTPATH,user,pwd,adminurl,name)
-		proc = subprocess.Popen(cmd_str, shell=True, stdout=subprocess.PIPE)
-		
-		print "%s starting request has been sent , will be in running status shortly. " % name
-		'''
-		# not print output in this way ,as start may takes time
-		while proc.poll() is None:
-		    output = proc.stdout.readline()
-		    if output.startswith('CONNECT TO ADMIN URL') or flag:
-			flag = True
-		    if flag:
-			print output
-		'''
-	else:
-		print "could not find %s  , make sure you spell correct" % name
 	
 
 def stopServers(namelist):
@@ -57,21 +57,21 @@ def stopServers(namelist):
 	for name in namelist:
 		stopServer(name)
 
-def stopServer(name):
+def stopServer(args):
+	(adminurl,wlsHome,user,pwd,name) = args
 	logging.debug ("name is %s" % name)
-	(adminurl,wlsHome,user,pwd) = search.getwls(name)
+	
 	flag = False
-	if wlsHome :
-		cmd_str = '%s/common/bin/wlst.sh %s/wlst/stopwls.py -u %s -p %s -a %s -s %s' % (wlsHome,WLSTPATH,user,pwd,adminurl,name)
-		proc = subprocess.Popen(cmd_str, shell=True, stdout=subprocess.PIPE)
-		while proc.poll() is None:
-		    output = proc.stdout.readline()
-		    if output.startswith('CONNECT TO ADMIN URL') or flag:
-			flag = True
-		    if flag:
-			print output
-	else:
-		print "could not find %s , make sure you spell correct" % name
+	
+	cmd_str = '%s/common/bin/wlst.sh %s/wlst/stopwls.py -u %s -p %s -a %s -s %s' % (wlsHome,WLSTPATH,user,pwd,adminurl,name)
+	proc = subprocess.Popen(cmd_str, shell=True, stdout=subprocess.PIPE)
+	while proc.poll() is None:
+	    output = proc.stdout.readline()
+	    if output.startswith('CONNECT TO ADMIN URL') or flag:
+		flag = True
+	    if flag:
+		print output
+
 
 
 
