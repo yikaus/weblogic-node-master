@@ -22,6 +22,7 @@ setup(
     description = "Weblogic Node Master",
     license = "BSD",
     keywords = "weblogic admin administrator node manage",
+    install_requires=["psutil"],
     url = "https://github.com/yikaus/wlnm",   # project home page, if any
 
     # could also include long_description, download_url, classifiers, etc.
