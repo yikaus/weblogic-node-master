@@ -15,93 +15,78 @@ License  : BSD
 import sys
 import readline
 
-import search
-import starter
-import monitor
-import wls
+
 import util
-import wlnmc
-from wlnmd import wlnmDaemon
+
+from wlnsc import ServerClient
 
 
-remote = False
+#server_inst = ServerClient(host="localhost",port="9099")
+#server_inst.connect()
 
-cmddict={'init':search.searchAll,
-	'ls':search.show,
-	'lswls':search.showWLS,
-	'lsd':search.showDomains,
-	'nmstart':starter.nmstart,
-	#'checkport':util.checkport,
-	'help':util.help,
-	'startadmin':starter.startAdmin,
-	'start':wls.startServers,
-	'stop':wls.stopServers,
-	'lsp':monitor.listprocess,
-	'kill':starter.kill,
-	'connect':wlnmc.connect,
-	'quit':sys.exit
-}
+class remoteCmds():
+	def __init__(self,server):
+		self.server = server
 
-remote_cmddict={'init':wlnmc.searchAll,
-	'ls':wlnmc.show,
-	'lswls':wlnmc.showWLS,
-	'lsd':wlnmc.showDomains,
-	'nmstart':wlnmc.nmstart,
-	'help':util.help,
-	'startadmin':wlnmc.startAdmin,
-	'start':wlnmc.startServers,
-	'stop':wlnmc.stopServers,
-	'lsp':wlnmc.listprocess,
-	'kill':wlnmc.kill,
-	'connect':wlnmc.connect,
-	'disconnect':wlnmc.disconnect,
-	'quit':sys.exit
-}
 
-cmds=cmddict.keys()
+		self.cmddict={'init':self.server.initMachine,
+			'ls':self.server.show,
+			'lswls':self.server.showWLS,
+			'lsd':self.server.showDomains,
+			'lsm':self.server.showMachines,
+			'nmstart':self.server.nmstart,
+			'help':util.help,
+			'startadmin':self.server.startAdmin,
+			'start':self.server.startServer,
+			'stop':self.server.stopServer,
+			'lsp':self.server.listprocess,
+			'kill':self.server.kill,
+			'use':self.server.setMachine,
+			'disconnect':self.server.disconnect,
+			'quit':sys.exit
+		}
 
-rcmds = remote_cmddict.keys()
+		self.cmds=self.cmddict.keys()
+
+	def runcmd(self,command,args):
+	
+		if command not in self.cmds:
+			print 'Invilad command! Press Tab key or use help command list all avaiable command.'
+			print ''
+		else:
+			if not args :
+				if command == "ls" :
+					self.cmddict[command]([])
+				else :
+					self.cmddict[command]()
+			else:
+				self.cmddict[command](args)
+
+
+
+	def validcmd(self,command,args):
+		#print self.server.machine
+		#print command
+		if command in ["ls","lsd" ,"lsp" ,"lswls" ,"disconnect","nmstart" ,"startadmin" ,"start" , "stop" , "kill"] and not self.server.machine:
+			print "You have to connect to one machine to use %s" % command
+			return
+		if command in ["lsd" ,"lsp" ,"lswls" , "lsm" , "quit","disconnect","help"] and args :
+			print "no arguments for command %s" % command
+			return
+		if command in ["init","nmstart" ,"startadmin" ,"start" , "stop" , "kill","use"] and not args :
+			print "arguments needed run command %s" % command
+			return
+		self.runcmd(command,args)
+
+
+
+
+cmds=["init","ls","lsd","lsm" ,"lsp" ,"lswls" ,"use","disconnect","nmstart" ,"startadmin" ,"start" , "stop" , "kill","quit","help"]
 
 def complete(text, state):
-    if remote :
-	for cmd in rcmds:
+    for cmd in cmds:
 		if cmd.startswith(text):
 		    if not state:
 			return cmd
 		    else:
 			state -= 1
-    else:
-	for cmd in cmds:
-		if cmd.startswith(text):
-		    if not state:
-			return cmd
-		    else:
-			state -= 1
-
-def validcmd(command,args,remote):
-	if command in ["lsd" ,"lsp" ,"lswls" , "init" , "quit","disconnect","help"] and args :
-		print "no arguments for command %s" % command
-		return
-	if command in ["nmstart" ,"startadmin" ,"start" , "stop" , "kill","connect"] and not args :
-		print "arguments needed run command %s" % command
-		return
-	runcmd(command,args,remote)
-
-def runcmd(command,args,remote):
-	
-	if remote :
-		icmddict = remote_cmddict
-	else :
-		icmddict = cmddict
-
-	if command not in icmddict.keys():
-		print 'Invilad command! Press Tab key or use help command list all avaiable command.'
-		print ''
-	else:
-		if not args :
-			if command == "ls" :
-				icmddict[command]([])
-			else :
-				icmddict[command]()
-		else:
-			icmddict[command](args)

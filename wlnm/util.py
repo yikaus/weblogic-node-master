@@ -14,19 +14,13 @@ License  : BSD
 
 import socket
 import shelve
-from os.path import expanduser
 from cStringIO import StringIO
 import os
 import sys
 import base64
 
 
-wlnm_data_file = "%s/.wlnm/wlnm.dat" % expanduser("~")
 
-def creatProfileDir():
-	pdir = "%s/.wlnm" % expanduser("~")
-	if not os.path.exists(pdir):
-		os.makedirs(pdir,0700)
 
 
 def help():
@@ -122,15 +116,19 @@ def checkports(port):
 			#return False
 		s.close()
 
-def checkport(port):
-	s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-	if s.connect_ex(('localhost', int(port)))==0:
-		#print "port %s is Opened" % iport
-		return True
-	else:
-		#print "port %s is Closed" % iport
+def checkport(port,host="localhost"):
+	try :
+		s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+		if s.connect_ex((host, int(port)))==0:
+			#print "port %s is Opened" % iport
+			return True
+		else:
+			#print "port %s is Closed" % iport
+			return False
+		s.close()
+	except :
+		# any wrong return false , eg. host is not resolved.
 		return False
-	s.close()
 
 def initDB():
 	db = shelve.open(wlnm_data_file,"c")
@@ -221,3 +219,10 @@ def decode_output(my_out):
 
 def encode_output(my_out):
 	return base64.b64encode(my_out)
+
+def RepresentsInt(s):
+    try: 
+        int(s)
+        return True
+    except ValueError:
+        return False

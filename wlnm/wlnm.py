@@ -15,23 +15,25 @@ License  : BSD
 '''
 
 import sys
-import os
-#import re
-#import subprocess,shlex
-import logging
 import argparse
+
+import os
+import logging
+
 import socket
 import readline
 
-import inputer,search,wlnmd,wlnmc
+import inputer,search,util
 
-
+from wlnsc import ServerClient
+from inputer import remoteCmds
 
 logging.basicConfig(level=logging.INFO,
                     format='%(asctime)s %(levelname)s %(message)s')
 
+ 
 
-def local_run():
+def run(server_inst):
 
     print "Weblogic Node Master"
     print ""
@@ -39,57 +41,75 @@ def local_run():
     print ""
 
     command =''
-    #remoteCMD = False
     readline.parse_and_bind("tab: complete")
+    readline.set_completer(inputer.complete)
+    mycmd = remoteCmds(server_inst)
     while True :
-        #remoteCMD = inputer.remote
-	readline.set_completer(inputer.complete)
-	if inputer.remote :
-		i_input = raw_input ('%s>>' % wlnmc.host)
+        
+	
+	if server_inst.machine :
+		i_input = raw_input ('wlnm(%s)>>' % server_inst.machine)
 	else:
-		i_input = raw_input ('%s(localhost)>>' % socket.gethostname())
+		i_input = raw_input ('wlnm>>')
 	if not i_input : continue
 	command = i_input.split()[0]
 	args=i_input.split()[1:]
-	inputer.validcmd(command,args,inputer.remote)
 	
-	'''
-	if command == "connect" :
-		remoteCMD = True
-	if command == "disconnect" :
-		remoteCMD = False
-	'''
+	
+	mycmd.validcmd(command,args)
+	
     print "Bye"
 
 
+class MyArgumentParser(argparse.ArgumentParser):
+    def error(self, message):
+        raise Exception(message)
 
 def main():
-    print 
-    
-    parser = argparse.ArgumentParser()
-    parser.add_argument('-d', '--daemon', action="store_true" , dest='daemon', default=False, help='Run wlnm in daemon mode')
-    parser.add_argument('-p', '--port', dest='listenPort', help='Listen port to run wlnm as daemon')
-    parser.add_argument('-k', '--kill', action="store_true", dest='killwlnmd', help='Kill wlnm daemon process')
-    args = parser.parse_args()
-    
-    if args.daemon or args.killwlnmd :
-	search.checkinit(True)
-    else :
-	search.checkinit(False)
-    
-    if  args.daemon:
-	if args.listenPort :
-		#print args.listenPort 
-		
-		wlnmd.runDaemon(int(args.listenPort))
-	else:
-		print "Port number need to provide , eg. -p 9099 or --port 9099"
-	
-    elif  args.killwlnmd:
-	wlnmd.stopDaemon()
-    else :
-	local_run()
+	#print "----"
+	args = None
+	try:
+		parser = MyArgumentParser(prog='wlnm')
+		parser.add_argument('-s', '--server' ,dest ='host', help='Hostname or IP of wlnm server,default is localhost',default="localhost")
+		parser.add_argument('-p', '--port', type =int ,help='Listen port,default is 9099',default="9099")
 
+		args = parser.parse_args()
+		
+
+	except SystemExit:
+		pass
+	except  Exception ,e:
+		
+		parser.print_help()
+
+		print
+		print "Arguments Error"
+		print "---------------"
+		print e
+		print
+
+		sys.exit()
+	
+	if not args :  sys.exit()
+
+	if not util.checkport(args.port,host=args.host) :
+			
+		print " wlnm server at %s:%s is not reachable\n" % (args.host,args.port)
+		sys.exit()
+	
+
+	try :
+		server_inst = ServerClient(host=args.host,port=args.port)
+		server_inst.connect()
+		
+	except Exception,e:
+		print "wlnm server %s:%s is not able to connect." % (args.host,args.port)
+		print
+		raise e
+		sys.exit()
+	run(server_inst)
+
+	
 
 if __name__ == "__main__":
     main()

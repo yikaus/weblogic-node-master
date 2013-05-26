@@ -1,9 +1,9 @@
 '''
 
-remoter.py
+agent.py
 ==========
 
-Desc: process function proxy for remote call
+Desc: agent facade ,  remote call interface
 
 
 Author: Kevin Yi<yikaus @ gmail>
@@ -13,6 +13,8 @@ License  : BSD
 
 '''
 
+import traceback
+
 import util
 import search
 import starter
@@ -20,62 +22,62 @@ import monitor
 import wls
 
 def searchAll():
+	
+	return search.searchAll()
+	
+
+
+def nmstart(wls_home):
 	mystdout,old_stdout = util.redirectStdout()
-	search.searchAll()
+	try:
+		starter.nmstart(wls_home)
+	except :
+		traceback.print_exc()
 	util.finishRedirectStdout(old_stdout)
 	return util.encode_output(mystdout.getvalue())
 
-def show(args):
+def startAdmin(domainhome):
 	mystdout,old_stdout = util.redirectStdout()
-	search.show(args)
+	try:
+		starter.startAdmin(domainhome)
+	except :
+		traceback.print_exc()
 	util.finishRedirectStdout(old_stdout)
 	return util.encode_output(mystdout.getvalue())
 
-def showWLS():
+def startServer(args):
 	mystdout,old_stdout = util.redirectStdout()
-	search.showWLS()
+	try:
+		wls.startServer(args)
+	except :
+		traceback.print_exc()
 	util.finishRedirectStdout(old_stdout)
 	return util.encode_output(mystdout.getvalue())
 
-def showDomains():
+def stopServer(args):
 	mystdout,old_stdout = util.redirectStdout()
-	search.showDomains()
-	util.finishRedirectStdout(old_stdout)
-	return util.encode_output(mystdout.getvalue())
-
-def nmstart(args):
-	mystdout,old_stdout = util.redirectStdout()
-	starter.nmstart(args)
-	util.finishRedirectStdout(old_stdout)
-	return util.encode_output(mystdout.getvalue())
-
-def startAdmin(args):
-	mystdout,old_stdout = util.redirectStdout()
-	starter.startAdmin(args)
-	util.finishRedirectStdout(old_stdout)
-	return util.encode_output(mystdout.getvalue())
-
-def startServers(args):
-	mystdout,old_stdout = util.redirectStdout()
-	wls.startServers(args)
-	util.finishRedirectStdout(old_stdout)
-	return util.encode_output(mystdout.getvalue())
-
-def stopServers(args):
-	mystdout,old_stdout = util.redirectStdout()
-	wls.stopServers(args)
+	try:
+		wls.stopServer(args)
+	except :
+		traceback.print_exc()
 	util.finishRedirectStdout(old_stdout)
 	return util.encode_output(mystdout.getvalue())
 
 def listprocess():
 	mystdout,old_stdout = util.redirectStdout()
-	monitor.listprocess()
+	try:
+		monitor.listprocess()
+	except :
+		traceback.print_exc()
 	util.finishRedirectStdout(old_stdout)
 	return util.encode_output(mystdout.getvalue())
 
 def kill(args):
 	mystdout,old_stdout = util.redirectStdout()
-	starter.kill(args)
+	try:
+		starter.kill(args)
+	except :
+		traceback.print_exc()
 	util.finishRedirectStdout(old_stdout)
 	return util.encode_output(mystdout.getvalue())
 

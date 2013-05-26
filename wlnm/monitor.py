@@ -23,7 +23,7 @@ def listprocess():
 
 	_table = [["Name", "CPU%", "MEM%" ,"THREADS","UPTIME+","PID"]]
 	
-	serversDB,servers = util.loadDB(server=True)[2]
+	#serversDB,servers = util.loadDB(server=True)[2]
 	
 
 	for p in psutil.process_iter():
