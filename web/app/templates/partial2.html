@@ -1,0 +1,17 @@
+<div>
+
+
+	 output : <textarea type="textAreaList" ng:model='messages' ng:format="string" rows="15" cols="48" ></textarea>
+
+
+    <form ng-submit="sendMessage()">
+        <input ng-model="messageText" />
+        <input type="submit" value="Send" />
+    </form
+</div>
+
+<p>
+  Showing of 'interpolate' filter:
+  {{ 'Current version is v%VERSION%.' | interpolate }}
+</p>
+
