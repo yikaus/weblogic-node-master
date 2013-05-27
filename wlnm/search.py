@@ -273,6 +273,8 @@ def showServers(machine,domain):
 					_host = machine
 				if util.checkport(serversDB[server]["port"],host=_host):
 					_status = 'UP'
+				else :
+					_status = 'DOWN'
 				table.append([serversDB[server]["name"],serversDB[server]["type"],serversDB[server]["host"],serversDB[server]["port"],_status])
 		    
 		util.pprint_table(table)
@@ -291,6 +293,8 @@ def showWLS(machine):
 	for w in wls:
 	    if util.checkport(wlsDB[w]["nmport"],host=machine):
 		_status = 'UP'
+	    else :
+		_status = 'DOWN'
 	    table.append([w,wlsDB[w]["version"],wlsDB[w]["home"],wlsDB[w]["nmport"], _status])
 	    
 	util.pprint_table(table)
@@ -305,6 +309,8 @@ def showMachines():
 	for m in mac:
 		if util.checkport(macDB[m]["agentport"],host=m):
 			_status = 'UP'
+		else :
+			_status = 'DOWN'
 		table.append([m,macDB[m]["agentport"], _status])
 	util.pprint_table(table)
 
