@@ -22,8 +22,14 @@ Requirements
 3. pip if run from source
 
 
-Screen shot & Tutorials 
+Screen cast & Tutorials 
 -------------
+
+Screen cast
+
+http://www.youtube.com/watch?v=pRiGSUNLYOo
+
+Tutorials & Blog
 
 http://weblogicnodemaster.blogspot.com.au/
 
