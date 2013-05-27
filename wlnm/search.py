@@ -261,13 +261,19 @@ def showDomains(machine):
 def showServers(machine,domain):
 	
 	serversDB,servers = database.loadDB(machine,server=True)[2]
+	_status = 'DOWN'
 
 	for _domain in domain:
 		print "[[%s]]" % _domain
 		table = [["Name", "Type", "HOST/IP","PORT","STATUS"]]
 		for server in servers:
 			if _domain == serversDB[server]["domain"] :
-				table.append([serversDB[server]["name"],serversDB[server]["type"],serversDB[server]["host"],serversDB[server]["port"],monitor.isRunning(serversDB[server]["name"])])
+				_host = serversDB[server]["host"]
+				if _host == 'localhost' :
+					_host = machine
+				if util.checkport(serversDB[server]["port"],host=_host):
+					_status = 'UP'
+				table.append([serversDB[server]["name"],serversDB[server]["type"],serversDB[server]["host"],serversDB[server]["port"],_status])
 		    
 		util.pprint_table(table)
 		print ""
@@ -283,7 +289,7 @@ def showWLS(machine):
 	_status = 'DOWN'
 
 	for w in wls:
-	    if util.checkport(wlsDB[w]["nmport"]):
+	    if util.checkport(wlsDB[w]["nmport"],host=machine):
 		_status = 'UP'
 	    table.append([w,wlsDB[w]["version"],wlsDB[w]["home"],wlsDB[w]["nmport"], _status])
 	    
@@ -297,7 +303,7 @@ def showMachines():
 	_status = 'DOWN'
 
 	for m in mac:
-		if util.checkport(macDB[m]["agentport"]):
+		if util.checkport(macDB[m]["agentport"],host=m):
 			_status = 'UP'
 		table.append([m,macDB[m]["agentport"], _status])
 	util.pprint_table(table)
