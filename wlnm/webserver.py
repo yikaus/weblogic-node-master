@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 '''
 
 webserver.py
@@ -17,13 +15,20 @@ License  : BSD
 
 import os
 from os import environ as env
-from sys import argv
+import sys
 import bottle
 from bottle import route, run, static_file, redirect, request, error
 from beaker.middleware import SessionMiddleware
-from wlnm import server ,util
+import server ,util,database
+from os.path import expanduser
+
+from daemon import Daemon
 
 bottle.debug(True)
+
+WEBPATH = os.path.dirname(os.path.abspath(__file__))
+webroot = '%s/app' % WEBPATH
+
 
 # session set up
 app = bottle.default_app()
@@ -43,31 +48,31 @@ app = SessionMiddleware(app, session_opts)
 
 @route('/lib/:path#.+#')
 def server_static(path):
-    return static_file(path, root='./app/lib/')
-
+    return static_file(path, root='%s/lib/' % webroot)
+'''
 @route('/scenarios.js')
 def scenario():
     return static_file('scenarios.js',root='./test/e2e/')
-
+'''
 @route('/favicon.ico')
 def favicon():
-    return static_file('favicon.ico', root='./app/')
+    return static_file('favicon.ico', root=webroot)
 
 @route('/js/:path#.+#')
 def server_static(path):
-    return static_file(path, root='./app/js/')
+    return static_file(path, root='%s/js/' % webroot)
 
 @route('/css/:path#.+#')
 def server_static(path):
-    return static_file(path, root='./app/css/')
+    return static_file(path, root='%s/css/' % webroot)
 
 @route('/img/:path#.+#')
 def server_static(path):
-    return static_file(path, root='./app/img/')
+    return static_file(path, root='%s/img/' % webroot)
 
 @route('/templates/:path#.+#')
 def server_static(path):
-    return static_file(path, root='./app/templates/')
+    return static_file(path, root='%s/templates/' % webroot)
 
 # route set up
 @route('/settings',method='POST')
@@ -89,15 +94,18 @@ def get_commands(id):
 @route('/')
 @route('/index.html')
 def index():
-    raise static_file('index.html', root='./app')
+    raise static_file('index.html', root=webroot)
 
+'''
 @route('/tests')
 def tests():
     raise static_file('runner.html', root='./test/e2e/')
+'''
+
 
 @error(404)
 def mistake404(code):
-    return static_file('404.html', root='./app')
+    return static_file('404.html', root=webroot)
 
 
 def runServer(port):
@@ -110,7 +118,7 @@ def saveMachine(machine):
 
 	s.save()
 
-	return 'Machine %s is used !' % machine
+	return 'Machine %s is set!' % machine
 
 def ifSession(key):
 	try :
@@ -172,6 +180,8 @@ def run_command(cmd,args=[]):
 			
 		except:
 			return result
+	elif cmd == 'init' :
+		return cmddict[cmd](args[0],args[1])
 	elif cmd == 'lsm' :
 		return util.decode_output(cmddict[cmd]())
 	elif cmd in ['lswls','lsp','lsd']:
@@ -185,4 +195,65 @@ def run_command(cmd,args=[]):
 	
 
 # start application
-bottle.run(app=app,host='0.0.0.0', port=argv[1])
+#database.checkdb()
+#bottle.run(app=app,host='0.0.0.0', port=argv[1])
+
+wlnws_pid_file = "%s/.wlnm/wlnws.pid" % expanduser("~")
+
+database.creatProfileDir()
+
+class webserverDaemon(Daemon):
+
+	def __init__(self,pidfile, port,stdin=os.devnull, stdout=os.devnull, stderr=os.devnull, home_dir='.', umask=022, verbose=1):
+		wlnws_out_file = "%s/.wlnm/wlnws.out" % expanduser("~")
+		self.stdin = stdin
+		self.stdout = wlnws_out_file
+		self.stderr = wlnws_out_file
+		self.pidfile = pidfile
+		self.home_dir = home_dir
+		self.verbose = verbose
+		self.umask = umask
+		self.daemon_alive = True
+		self.port = port
+	
+
+	def start(self):
+
+		# Check port see if it is open
+		if util.checkport(self.port) :
+			message = "port %s is occupied by other process\n"
+                        sys.stderr.write(message % self.port)
+                        sys.exit(1)
+		super(webserverDaemon, self).start()
+
+	def run(self):
+		try:
+			database.checkdb()
+			bottle.run(app=app,host='0.0.0.0', port =self.port)
+		except Eception,e:
+			print e
+			sys.exit(1)
+
+def runDaemon(iport):
+	print "Start wlnm web server daemon ."
+	daemon = webserverDaemon(pidfile=wlnws_pid_file,port=iport)
+	daemon.start()
+	
+
+
+def stopDaemon():
+	
+	if os.path.isfile(wlnws_pid_file):
+	    with open(wlnws_pid_file) as f:
+		pids = f.readlines()
+	    try:
+		os.kill(int(pids[0]),9)	#force kill
+		print "wlnm web server process %s is stopped ." % int(pids[0])
+	    except :
+		print "wlnm web server process %s was killed before ." % int(pids[0])
+	    finally :
+		os.remove(wlnws_pid_file)
+	else :
+	    print "wlnm server is not running , no process can be stopped."
+	
+	print

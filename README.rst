@@ -1,10 +1,12 @@
-wlnm 1.0.0 (Weblogic Node Master)
+wlnm 1.0.1 (Weblogic Node Master)
 ======================
 
 .. contents::
 
 Changes
 -------
+**1.0.1**: Add web access function, user can access wlnm via browser.
+
 **1.0.0**: Redesign wlnm as server based multi-user tool . add server & agent function .
 
 **0.2.0**: Add remote contol ablitity , which can be used multi-machine weblogic admin
@@ -29,7 +31,7 @@ Installation
 
 2. Install from source.
 
-    $ wget --no-check-certificate https://pypi.python.org/packages/source/w/wlnm/wlnm-1.0.0.tar.gz
+    $ wget --no-check-certificate https://pypi.python.org/packages/source/w/wlnm/wlnm-1.0.1.tar.gz
     
     $ tar xvf wlnm-<version>.tar.gz
     
@@ -37,7 +39,7 @@ Installation
 
 3. Install from RPM (build on Centos 64bit)
     
-    $ wget --no-check-certificate https://pypi.python.org/packages/2.6/w/wlnm/wlnm-1.0.0-1.noarch.rpm
+    $ wget --no-check-certificate https://pypi.python.org/packages/2.6/w/wlnm/wlnm-1.0.1-1.noarch.rpm
     
     $ sudo rpm -Uvh wlnm-<version>.noarch.rpm  
 
@@ -61,16 +63,25 @@ For windows user , you can download exe of python-psutil from it's website
 https://code.google.com/p/psutil/downloads/list
 
 
-New Features
+Terminology
 ------------
 
-New server and agent are introduced to wlnm :
+1.wlnm server :
 
-server process is a daemon process which maintain central metadata store , it allows multiple admin user to connect.
+Server process is a daemon process which maintain central metadata store , it is a CLI server and allows wlnm client tool to connect.
 
-agent process can be started on target machine ,which server can manage after it resigstered.
+2.wlnm webserver :
 
-wlnm now as a client can connect to server to run command against target machine on which agent is running . 
+wlnm webserver is standalone web server based on bottle micro web framework which handle wlnm web console request , it is similar with wlnm server and can be used independently .
+
+
+3.wlnm agent :
+
+wlnm agent is a process started on target machine . server or webserver process will control agent to run command against the machine.
+
+4.wlnm client:
+
+wlnm client is a client connect to wlnm server to run command against target machine on which wlnm agent is running . 
 
 
 Quick Start
@@ -78,7 +89,15 @@ Quick Start
 
 Let 's say we have 2 machine (machine1 & 2) running weblogic and one machine (machine 3) use to manage weblogic. 
 
-1. Run wlnm server and agent
+
+1. Start webserver of wlnm by
+
+	[user@machine1]$ wlnws start
+
+default port 9100 , or use -p option set port
+
+
+2. Run wlnm server and agent
 
 	[user@machine1]$ wlns start
 
@@ -90,7 +109,7 @@ run wlnm server on default port 9099 , or use -p option set port
 
 run wlnm agent listen default port 9098 on  both machine1 &2 , or use -p option set port
 
-2. Run wlnm client connect to server
+3.1 Run wlnm client connect to server
 
 	[user@machine3]$ wlnm -s machine1
 
@@ -101,6 +120,12 @@ connect wlnm server with default port 9099 and coming to interactive mode.
 	Type help to load help page .
 
 	wlnm>>
+
+3.2 access http://serverhost:9100/ to enter web console . 
+
+* Please note server and webserver you can start both or just start one of them if you only need cli or web access.
+
+4. Command examples
 
 First initialize two machines into server data store . 
 
@@ -144,12 +169,19 @@ quit
 
 	wlnm(machine2)>>quit
 
-3.stop server and agent
+
+
+5.stop server ,webserver and agent
 
 	[user@machine1]$ wlns stop
 
+	[user@machine1]$ wlnws stop
+
 	[user@machine1]$ wlna stop
 
+*tips 
+
+You can use  option restart instead of option start when start server ,webserver and agent . It will first check running process.
 
 Summary
 -------
@@ -172,7 +204,21 @@ Usage Examples::
 
     *port is no need provided when stop server
 
-2. Run/Stop wlnm agent on target machine
+2. Run/Stop wlnm web server
+
+    $ wlnws start|stop|restart -p <port>
+
+    *default port is 9100 .
+
+    $ wlnws start	# start wlnm server on localhost port 9100
+
+    $ wlnws start -p 19100 # start wlnm server on localhost port 19100
+
+    $ wlnws stop  # stop wlnm server
+
+    *port is no need provided when stop server
+
+3. Run/Stop wlnm agent on target machine
     
     $ wlna start|stop|restart -p <port>
 
@@ -186,7 +232,11 @@ Usage Examples::
 
     *port is no need provided when stop agent
 
-3. Run wlnm as client
+4. Web console access
+
+    http://serverhost:port/
+
+5. Run wlnm client
 
 The tool is used as interactive command mode , you need to enter wlnm prompt then use below command 
 
@@ -201,7 +251,7 @@ The tool is used as interactive command mode , you need to enter wlnm prompt the
 
     $ wlnm -s machine1 19980	#Connect to machine1 9099
 
-
+6. Commands
 
     wlnm>> use <hostname> 
 
@@ -258,7 +308,7 @@ The tool is used as interactive command mode , you need to enter wlnm prompt the
         Show help page .
 
     wlnm>> quit
-        quit weblogic node master.
+        quit weblogic node master. ( not avaliable from web console)
 
 
 
