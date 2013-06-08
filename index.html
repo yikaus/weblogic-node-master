@@ -3,32 +3,50 @@
   <head>
     <meta charset='utf-8'>
     <meta http-equiv="X-UA-Compatible" content="chrome=1">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-    <link href='https://fonts.googleapis.com/css?family=Architects+Daughter' rel='stylesheet' type='text/css'>
-    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen" />
-    <link rel="stylesheet" type="text/css" href="stylesheets/pygment_trac.css" media="screen" />
-    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print" />
+    <meta name="viewport" content="width=640" />
 
-    <!--[if lt IE 9]>
-    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
-    <![endif]-->
+    <link rel="stylesheet" href="stylesheets/core.css" media="screen"/>
+    <link rel="stylesheet" href="stylesheets/mobile.css" media="handheld, only screen and (max-device-width:640px)"/>
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css"/>
 
+    <script type="text/javascript" src="javascripts/modernizr.js"></script>
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+    <script type="text/javascript" src="javascripts/headsmart.min.js"></script>
+    <script type="text/javascript">
+      $(document).ready(function () {
+        $('#main_content').headsmart()
+      })
+    </script>
     <title>Weblogic-node-master by yikaus</title>
   </head>
 
   <body>
-    <header>
-      <div class="inner">
-        <h1>Weblogic-node-master</h1>
-        <h2>Weblogic Node Master -- A command tool to namage multiple hosted weblogic instances.</h2>
-        <a href="https://github.com/yikaus/weblogic-node-master" class="button"><small>View project on</small>GitHub</a>
-      </div>
-    </header>
+    <a id="forkme_banner" href="https://github.com/yikaus/weblogic-node-master">View on GitHub</a>
+    <div class="shell">
 
-    <div id="content-wrapper">
-      <div class="inner clearfix">
-        <section id="main-content">
-          <h1>
+      <header>
+        <span class="ribbon-outer">
+          <span class="ribbon-inner">
+            <h1>Weblogic-node-master</h1>
+            <h2>Weblogic Node Master -- A command tool to namage multiple hosted weblogic instances.</h2>
+          </span>
+          <span class="left-tail"></span>
+          <span class="right-tail"></span>
+        </span>
+      </header>
+
+      <section id="downloads">
+        <span class="inner">
+          <a href="https://github.com/yikaus/weblogic-node-master/zipball/master" class="zip"><em>download</em> .ZIP</a><a href="https://github.com/yikaus/weblogic-node-master/tarball/master" class="tgz"><em>download</em> .TGZ</a>
+        </span>
+      </section>
+
+
+      <span class="banner-fix"></span>
+
+
+      <section id="main_content">
+        <h1>
 <a name="wlnm-100-weblogic-node-master" class="anchor" href="#wlnm-100-weblogic-node-master"><span class="octicon octicon-link"></span></a>wlnm 1.0.0 (Weblogic Node Master)</h1>
 
 <p>.. contents::</p>
@@ -86,13 +104,11 @@
 
 <p>New server and agent are introduced to wlnm :</p>
 
-<p>server process is a daemon process which maintain central metadata store , it allows multiple admin user to connect.</p>
-
-<p>agent process can be started on target machine ,which server can manage after it resigstered.</p>
-
-<p>wlnm now as a client can connect to server to run command against target machine on which agent is running . </p>
-
-<h2>
+<ul>
+<li><p>server process is a daemon process which maintain central metadata store , it allows multiple admin user to connect.</p></li>
+<li><p>agent process can be started on target machine ,which server can manage after it resigstered.</p></li>
+<li><p>wlnm now as a client can connect to server to run command against target machine on which agent is running . </p></li>
+</ul><h2>
 <a name="quick-start" class="anchor" href="#quick-start"><span class="octicon octicon-link"></span></a>Quick Start</h2>
 
 <p>Let 's say we have 2 machine (machine1 &amp; 2) running weblogic and one machine (machine 3) use to manage weblogic. </p>
@@ -115,7 +131,7 @@
 <li>Run wlnm client connect to server</li>
 </ol><p>connect wlnm server with default port 9099 and coming to interactive mode.</p>
 
-<pre><code>    [user@machine3]$ wlnm -s machine1
+<pre><code>[user@machine3]$ wlnm -s machine1
 
 Weblogic Node Master
 
@@ -237,7 +253,8 @@ $ wlnm -s machine1 19980    #Connect to machine1 9099
 
 wlnm&gt;&gt; use &lt;hostname&gt; 
 
- choose target machine to operate ,agent need to be started at the machine
+ choose target machine to operate ,agent need to be started 
+ at the machine
 
 wlnm&gt;&gt; disconnect
 
@@ -245,7 +262,8 @@ wlnm&gt;&gt; disconnect
 
 wlnm&gt;&gt; init [agentHost] [agentPort]
 
- initialise and register a agent and also fetch all related weblogic information from that machine . 
+ initialise and register a agent and also fetch all related 
+ weblogic information from that machine . 
 
 wlnm&gt;&gt; lsm
 
@@ -261,13 +279,15 @@ wlnm(&lt;targethost&gt;)&gt;&gt; lsd
       List weblogic all domains , not include servers  
 
 wlnm(&lt;targethost&gt;)&gt;&gt; lswls
-     List all version weblogic installation as well as nodemnager informations
+     List all version weblogic installation as well as nodemnager 
+     informations
 
 wlnm(&lt;targethost&gt;)&gt;&gt; lsp
      List all running weblogic instances
 
 wlnm(&lt;targethost&gt;)&gt;&gt; init
-     This tool will search all weblogic domain at frist time use , once domain configure changed you can research weblogic 
+     This tool will search all weblogic domain at frist time use , 
+     once domain configure changed you can research weblogic 
  informations and update local store
 
 wlnm(&lt;targethost&gt;)&gt;&gt; startadmin [domainname]  
@@ -281,7 +301,8 @@ wlnm(&lt;targethost&gt;)&gt;&gt; stop [managedserverName]
 
 wlnm(&lt;targethost&gt;)&gt;&gt; kill  [port|servername] 
     kill process of server by port or servername  
-* sometimes managed server is not able to be killed as autostart configured in weblogic domain.
+* sometimes managed server is not able to be killed as autostart 
+configured in weblogic domain.
 
 wlnm(&lt;targethost&gt;)&gt;&gt; nmstart [port] 
     start node manager by port. 
@@ -292,25 +313,32 @@ wlnm&gt;&gt; help
 wlnm&gt;&gt; quit
     quit weblogic node master.
 </code></pre>
-        </section>
+      </section>
 
-        <aside id="sidebar">
-          <a href="https://github.com/yikaus/weblogic-node-master/zipball/master" class="button">
-            <small>Download</small>
-            .zip file
-          </a>
-          <a href="https://github.com/yikaus/weblogic-node-master/tarball/master" class="button">
-            <small>Download</small>
-            .tar.gz file
-          </a>
+      <footer>
+        <span class="ribbon-outer">
+          <span class="ribbon-inner">
+            <p>this project by <a href="https://github.com/yikaus">yikaus</a> can be found on <a href="https://github.com/yikaus/weblogic-node-master">GitHub</a></p>
+          </span>
+          <span class="left-tail"></span>
+          <span class="right-tail"></span>
+        </span>
+        <p>Generated with <a href="http://pages.github.com">GitHub Pages</a> using Merlot</p>
+        <span class="octocat"></span>
+      </footer>
 
-          <p class="repo-owner"><a href="https://github.com/yikaus/weblogic-node-master"></a> is maintained by <a href="https://github.com/yikaus">yikaus</a>.</p>
-
-          <p>This page was generated by <a href="pages.github.com">GitHub Pages</a> using the Architect theme by <a href="http://twitter.com/jasonlong">Jason Long</a>.</p>
-        </aside>
-      </div>
     </div>
 
-  
+              <script type="text/javascript">
+            var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+            document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+          </script>
+          <script type="text/javascript">
+            try {
+              var pageTracker = _gat._getTracker("UA-41565492-1");
+            pageTracker._trackPageview();
+            } catch(err) {}
+          </script>
+
   </body>
 </html>
