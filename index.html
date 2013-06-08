@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link href='https://fonts.googleapis.com/css?family=Architects+Daughter' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen" />
+    <link rel="stylesheet" type="text/css" href="stylesheets/pygment_trac.css" media="screen" />
+    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print" />
+
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    <title>Weblogic-node-master by yikaus</title>
+  </head>
+
+  <body>
+    <header>
+      <div class="inner">
+        <h1>Weblogic-node-master</h1>
+        <h2>Weblogic Node Master -- A command tool to namage multiple hosted weblogic instances.</h2>
+        <a href="https://github.com/yikaus/weblogic-node-master" class="button"><small>View project on</small>GitHub</a>
+      </div>
+    </header>
+
+    <div id="content-wrapper">
+      <div class="inner clearfix">
+        <section id="main-content">
+          <h1>
+<a name="wlnm-100-weblogic-node-master" class="anchor" href="#wlnm-100-weblogic-node-master"><span class="octicon octicon-link"></span></a>wlnm 1.0.0 (Weblogic Node Master)</h1>
+
+<p>.. contents::</p>
+
+<h2>
+<a name="changes" class="anchor" href="#changes"><span class="octicon octicon-link"></span></a>Changes</h2>
+
+<p><strong>1.0.0</strong>: Redesign wlnm as server based multi-user tool . add server &amp; agent function .</p>
+
+<p><strong>0.2.0</strong>: Add remote contol ablitity , which can be used multi-machine weblogic admin</p>
+
+<p><strong>0.1.0</strong>: Initial drop</p>
+
+<h2>
+<a name="requirements" class="anchor" href="#requirements"><span class="octicon octicon-link"></span></a>Requirements</h2>
+
+<ol>
+<li><p>Weblogic Server 9,10,11 installed . Weblogic domain and nodemanager server configued </p></li>
+<li><p>Python 2.6 + installed if run from source</p></li>
+<li><p>pip if run from source</p></li>
+</ol><h2>
+<a name="installation" class="anchor" href="#installation"><span class="octicon octicon-link"></span></a>Installation</h2>
+
+<ol>
+<li>
+<p>Install through pip.</p>
+
+<p>$ sudo pip install wlnm</p>
+</li>
+<li>
+<p>Install from source.</p>
+
+<p>$ wget --no-check-certificate <a href="https://pypi.python.org/packages/source/w/wlnm/wlnm-1.0.0.tar.gz">https://pypi.python.org/packages/source/w/wlnm/wlnm-1.0.0.tar.gz</a></p>
+
+<p>$ tar xvf wlnm-.tar.gz</p>
+
+<p>$ sudo python setup.py install  </p>
+</li>
+<li>
+<p>Install from RPM (build on Centos 64bit)</p>
+
+<p>$ wget --no-check-certificate <a href="https://pypi.python.org/packages/2.6/w/wlnm/wlnm-1.0.0-1.noarch.rpm">https://pypi.python.org/packages/2.6/w/wlnm/wlnm-1.0.0-1.noarch.rpm</a></p>
+
+<p>$ sudo rpm -Uvh wlnm-.noarch.rpm  </p>
+</li>
+<li>
+<p>Run directly from git source if you don't have sudo access</p>
+
+<p>$ git clone <a href="https://github.com/yikaus/wlnm">https://github.com/yikaus/wlnm</a></p>
+
+<p>$ ./wlnm/wlnm/wlnm.py</p>
+</li>
+</ol><h2>
+<a name="new-features" class="anchor" href="#new-features"><span class="octicon octicon-link"></span></a>New Features</h2>
+
+<p>New server and agent are introduced to wlnm :</p>
+
+<p>server process is a daemon process which maintain central metadata store , it allows multiple admin user to connect.</p>
+
+<p>agent process can be started on target machine ,which server can manage after it resigstered.</p>
+
+<p>wlnm now as a client can connect to server to run command against target machine on which agent is running . </p>
+
+<h2>
+<a name="quick-start" class="anchor" href="#quick-start"><span class="octicon octicon-link"></span></a>Quick Start</h2>
+
+<p>Let 's say we have 2 machine (machine1 &amp; 2) running weblogic and one machine (machine 3) use to manage weblogic. </p>
+
+<ol>
+<li>Run wlnm server and agent</li>
+</ol><p>run wlnm server on default port 9099 , or use -p option set port</p>
+
+<pre><code>[user@machine1]$ wlns start
+</code></pre>
+
+<p>run wlnm agent listen default port 9098 on  both machine1 &amp;2 , or use -p option set port</p>
+
+<pre><code>[user@machine1]$ wlna start
+
+[user@machine2]$ wlna start
+</code></pre>
+
+<ol>
+<li>Run wlnm client connect to server</li>
+</ol><p>connect wlnm server with default port 9099 and coming to interactive mode.</p>
+
+<pre><code>    [user@machine3]$ wlnm -s machine1
+
+Weblogic Node Master
+
+Type help to load help page .
+
+wlnm&gt;&gt;
+</code></pre>
+
+<p>First initialize two machines into server data store . </p>
+
+<pre><code>wlnm&gt;&gt; init machine1 9098
+
+wlnm&gt;&gt; init machine2 9098
+</code></pre>
+
+<p>when done list all register machine</p>
+
+<pre><code>wlnm&gt;&gt; lsm
+</code></pre>
+
+<p>choose machine1 to operate</p>
+
+<pre><code>wlnm&gt;&gt; use machine1
+
+wlnm(machine1)&gt;&gt;
+</code></pre>
+
+<p>list weblogic processes on this machine  </p>
+
+<pre><code>wlnm(machine1)&gt;&gt;lsp
+</code></pre>
+
+<p>list weblogics installed on this machine</p>
+
+<pre><code>wlnm(machine1)&gt;&gt;lswls
+</code></pre>
+
+<p>list domains configured on this machine</p>
+
+<pre><code>wlnm(machine1)&gt;&gt;ls
+</code></pre>
+
+<p>disconnect machine1</p>
+
+<pre><code>wlnm(machine1)&gt;&gt;disconnect
+</code></pre>
+
+<p>use machine2</p>
+
+<pre><code>wlnm&gt;&gt; use machine2
+
+wlnm(machine2)&gt;&gt;
+</code></pre>
+
+<p>quit    </p>
+
+<pre><code>wlnm(machine2)&gt;&gt;quit
+</code></pre>
+
+<p>3.stop server and agent</p>
+
+<pre><code>[user@machine1]$ wlns stop
+
+[user@machine1]$ wlna stop
+</code></pre>
+
+<h2>
+<a name="summary" class="anchor" href="#summary"><span class="octicon octicon-link"></span></a>Summary</h2>
+
+<p>wlnm (Weblogic node master) is command tool to manage local weblogic installation and server instance ,node manager . It is based on metadata searching from config.xml and nodemanager.properties . You can use this tool directly without any configuration or enviroment setup . The tool itself will gathering all weblogic metadata infomations by go through all weblogic directories. It provides the function like list all domains , installation , servers and nodemanager information , start/kill local server instance also remote managedserver which through buildin WLST script. Welcome to test /use in your dev and test enviroment . As it is still in early version better not to use in production enviroment .</p>
+
+<p>Usage Examples::</p>
+
+<ol>
+<li>
+<p>Run/Stop wlnm server process</p>
+
+<p>$ wlns start|stop|restart -p </p>
+
+<p>*default port is 9099 .</p>
+
+<p>$ wlns start    # start wlnm server on localhost port 9099</p>
+
+<p>$ wlns start -p 19009 # start wlnm server on localhost port 19009</p>
+
+<p>$ wlns stop  # stop wlnm server</p>
+
+<p>*port is no need provided when stop server</p>
+</li>
+<li>
+<p>Run/Stop wlnm agent on target machine</p>
+
+<p>$ wlna start|stop|restart -p </p>
+
+<p>*default port is 9098 .</p>
+
+<p>$ wlna start    # start wlnm agent on localhost port 9098</p>
+
+<p>$ wlna start -p 19008 # start wlnm agent on localhost port 19008</p>
+
+<p>$ wlna stop  # stop wlnm agent</p>
+
+<p>*port is no need provided when stop agent</p>
+</li>
+<li><p>Run wlnm as client</p></li>
+</ol><p>The tool is used as interactive command mode , you need to enter wlnm prompt then use below command </p>
+
+<pre><code>wlnm -s &lt;hostname&gt; -p &lt;serverport&gt;
+
+*default server hostname is localhost , default server port is 9099
+
+Example:
+
+$ wlnm      #Connect to localhost 9099
+
+$ wlnm -s machine1 19980    #Connect to machine1 9099
+
+
+
+wlnm&gt;&gt; use &lt;hostname&gt; 
+
+ choose target machine to operate ,agent need to be started at the machine
+
+wlnm&gt;&gt; disconnect
+
+ Disconnect remote wlnm daemon connection
+
+wlnm&gt;&gt; init [agentHost] [agentPort]
+
+ initialise and register a agent and also fetch all related weblogic information from that machine . 
+
+wlnm&gt;&gt; lsm
+
+ list all registered machine .
+
+wlnm(&lt;targethost&gt;)&gt;&gt; ls
+     List all weblogic domains with servers belong to it.
+
+wlnm(&lt;targethost&gt;)&gt;&gt; ls [domainName]
+     List weblogic domain by domain name .
+
+wlnm(&lt;targethost&gt;)&gt;&gt; lsd 
+      List weblogic all domains , not include servers  
+
+wlnm(&lt;targethost&gt;)&gt;&gt; lswls
+     List all version weblogic installation as well as nodemnager informations
+
+wlnm(&lt;targethost&gt;)&gt;&gt; lsp
+     List all running weblogic instances
+
+wlnm(&lt;targethost&gt;)&gt;&gt; init
+     This tool will search all weblogic domain at frist time use , once domain configure changed you can research weblogic 
+ informations and update local store
+
+wlnm(&lt;targethost&gt;)&gt;&gt; startadmin [domainname]  
+     Start admin server by domain name  . 
+
+wlnm(&lt;targethost&gt;)&gt;&gt; start [managedserverName] 
+    start managed server by servername ,including remote server .
+
+wlnm(&lt;targethost&gt;)&gt;&gt; stop [managedserverName] 
+    stop managed server by servername ,including remote server .
+
+wlnm(&lt;targethost&gt;)&gt;&gt; kill  [port|servername] 
+    kill process of server by port or servername  
+* sometimes managed server is not able to be killed as autostart configured in weblogic domain.
+
+wlnm(&lt;targethost&gt;)&gt;&gt; nmstart [port] 
+    start node manager by port. 
+
+wlnm&gt;&gt; help
+    Show help page .
+
+wlnm&gt;&gt; quit
+    quit weblogic node master.
+</code></pre>
+        </section>
+
+        <aside id="sidebar">
+          <a href="https://github.com/yikaus/weblogic-node-master/zipball/master" class="button">
+            <small>Download</small>
+            .zip file
+          </a>
+          <a href="https://github.com/yikaus/weblogic-node-master/tarball/master" class="button">
+            <small>Download</small>
+            .tar.gz file
+          </a>
+
+          <p class="repo-owner"><a href="https://github.com/yikaus/weblogic-node-master"></a> is maintained by <a href="https://github.com/yikaus">yikaus</a>.</p>
+
+          <p>This page was generated by <a href="pages.github.com">GitHub Pages</a> using the Architect theme by <a href="http://twitter.com/jasonlong">Jason Long</a>.</p>
+        </aside>
+      </div>
+    </div>
+
+  
+  </body>
+</html>
