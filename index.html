@@ -47,12 +47,14 @@
 
       <section id="main_content">
         <h1>
-<a name="wlnm-100-weblogic-node-master" class="anchor" href="#wlnm-100-weblogic-node-master"><span class="octicon octicon-link"></span></a>wlnm 1.0.0 (Weblogic Node Master)</h1>
+<a name="wlnm-101-weblogic-node-master" class="anchor" href="#wlnm-101-weblogic-node-master"><span class="octicon octicon-link"></span></a>wlnm 1.0.1 (Weblogic Node Master)</h1>
 
 <p>.. contents::</p>
 
 <h2>
 <a name="changes" class="anchor" href="#changes"><span class="octicon octicon-link"></span></a>Changes</h2>
+
+<p><strong>1.0.1</strong>: Add web access function, user can access wlnm via browser.</p>
 
 <p><strong>1.0.0</strong>: Redesign wlnm as server based multi-user tool . add server &amp; agent function .</p>
 
@@ -79,7 +81,7 @@
 <li>
 <p>Install from source.</p>
 
-<p>$ wget --no-check-certificate <a href="https://pypi.python.org/packages/source/w/wlnm/wlnm-1.0.0.tar.gz">https://pypi.python.org/packages/source/w/wlnm/wlnm-1.0.0.tar.gz</a></p>
+<p>$ wget --no-check-certificate <a href="https://pypi.python.org/packages/source/w/wlnm/wlnm-1.0.1.tar.gz">https://pypi.python.org/packages/source/w/wlnm/wlnm-1.0.1.tar.gz</a></p>
 
 <p>$ tar xvf wlnm-.tar.gz</p>
 
@@ -88,7 +90,7 @@
 <li>
 <p>Install from RPM (build on Centos 64bit)</p>
 
-<p>$ wget --no-check-certificate <a href="https://pypi.python.org/packages/2.6/w/wlnm/wlnm-1.0.0-1.noarch.rpm">https://pypi.python.org/packages/2.6/w/wlnm/wlnm-1.0.0-1.noarch.rpm</a></p>
+<p>$ wget --no-check-certificate <a href="https://pypi.python.org/packages/2.6/w/wlnm/wlnm-1.0.1-1.noarch.rpm">https://pypi.python.org/packages/2.6/w/wlnm/wlnm-1.0.1-1.noarch.rpm</a></p>
 
 <p>$ sudo rpm -Uvh wlnm-.noarch.rpm  </p>
 </li>
@@ -99,7 +101,7 @@
 
 <p>$ ./wlnm/wlnm/wlnm.py</p>
 </li>
-</ol><p><strong>issues with install psutil</strong></p>
+</ol><p>issues with install psutil</p>
 
 <p>As wlnm require psutil and when psutil install from source it will having gcc compile issue when you don't have python-dev installed.</p>
 
@@ -113,20 +115,36 @@
 <p><a href="https://code.google.com/p/psutil/downloads/list">https://code.google.com/p/psutil/downloads/list</a></p>
 
 <h2>
-<a name="new-features" class="anchor" href="#new-features"><span class="octicon octicon-link"></span></a>New Features</h2>
+<a name="terminology" class="anchor" href="#terminology"><span class="octicon octicon-link"></span></a>Terminology</h2>
 
-<p>New server and agent are introduced to wlnm :</p>
+<p>1.wlnm server :</p>
 
-<p>server process is a daemon process which maintain central metadata store , it allows multiple admin user to connect.</p>
+<p>Server process is a daemon process which maintain central metadata store , it is a CLI server and allows wlnm client tool to connect.</p>
 
-<p>agent process can be started on target machine ,which server can manage after it resigstered.</p>
+<p>2.wlnm webserver :</p>
 
-<p>wlnm now as a client can connect to server to run command against target machine on which agent is running . </p>
+<p>wlnm webserver is standalone web server based on bottle micro web framework which handle wlnm web console request , it is similar with wlnm server and can be used independently .</p>
+
+<p>3.wlnm agent :</p>
+
+<p>wlnm agent is a process started on target machine . server or webserver process will control agent to run command against the machine.</p>
+
+<p>4.wlnm client:</p>
+
+<p>wlnm client is a client connect to wlnm server to run command against target machine on which wlnm agent is running . </p>
 
 <h2>
 <a name="quick-start" class="anchor" href="#quick-start"><span class="octicon octicon-link"></span></a>Quick Start</h2>
 
 <p>Let 's say we have 2 machine (machine1 &amp; 2) running weblogic and one machine (machine 3) use to manage weblogic. </p>
+
+<ol>
+<li>
+<p>Start webserver of wlnm by</p>
+
+<p>[user@machine1]$ wlnws start</p>
+</li>
+</ol><p>default port 9100 , or use -p option set port</p>
 
 <ol>
 <li>
@@ -143,13 +161,12 @@
 
 <p>run wlnm agent listen default port 9098 on  both machine1 &amp;2 , or use -p option set port</p>
 
-<ol>
-<li>
-<p>Run wlnm client connect to server</p>
+<p>3.1 Run wlnm client connect to server</p>
 
-<p>[user@machine3]$ wlnm -s machine1</p>
-</li>
-</ol><p>connect wlnm server with default port 9099 and coming to interactive mode.</p>
+<pre><code>[user@machine3]$ wlnm -s machine1
+</code></pre>
+
+<p>connect wlnm server with default port 9099 and coming to interactive mode.</p>
 
 <pre><code>Weblogic Node Master
 
@@ -158,7 +175,13 @@ Type help to load help page .
 wlnm&gt;&gt;
 </code></pre>
 
-<p>First initialize two machines into server data store . </p>
+<p>3.2 access http://serverhost:9100/ to enter web console . </p>
+
+<ul>
+<li>Please note server and webserver you can start both or just start one of them if you only need cli or web access.</li>
+</ul><ol>
+<li>Command examples</li>
+</ol><p>First initialize two machines into server data store . </p>
 
 <pre><code>wlnm&gt;&gt; init machine1 9098
 
@@ -209,12 +232,18 @@ wlnm(machine2)&gt;&gt;
 <pre><code>wlnm(machine2)&gt;&gt;quit
 </code></pre>
 
-<p>3.stop server and agent</p>
+<p>5.stop server ,webserver and agent</p>
 
 <pre><code>[user@machine1]$ wlns stop
 
+[user@machine1]$ wlnws stop
+
 [user@machine1]$ wlna stop
 </code></pre>
+
+<p>*tips </p>
+
+<p>You can use  option restart instead of option start when start server ,webserver and agent . It will first check running process.</p>
 
 <h2>
 <a name="summary" class="anchor" href="#summary"><span class="octicon octicon-link"></span></a>Summary</h2>
@@ -240,6 +269,21 @@ wlnm(machine2)&gt;&gt;
 <p>*port is no need provided when stop server</p>
 </li>
 <li>
+<p>Run/Stop wlnm web server</p>
+
+<p>$ wlnws start|stop|restart -p </p>
+
+<p>*default port is 9100 .</p>
+
+<p>$ wlnws start   # start wlnm server on localhost port 9100</p>
+
+<p>$ wlnws start -p 19100 # start wlnm server on localhost port 19100</p>
+
+<p>$ wlnws stop  # stop wlnm server</p>
+
+<p>*port is no need provided when stop server</p>
+</li>
+<li>
 <p>Run/Stop wlnm agent on target machine</p>
 
 <p>$ wlna start|stop|restart -p </p>
@@ -254,7 +298,12 @@ wlnm(machine2)&gt;&gt;
 
 <p>*port is no need provided when stop agent</p>
 </li>
-<li><p>Run wlnm as client</p></li>
+<li>
+<p>Web console access</p>
+
+<p>http://serverhost:port/</p>
+</li>
+<li><p>Run wlnm client</p></li>
 </ol><p>The tool is used as interactive command mode , you need to enter wlnm prompt then use below command </p>
 
 <pre><code>wlnm -s &lt;hostname&gt; -p &lt;serverport&gt;
@@ -266,66 +315,72 @@ Example:
 $ wlnm      #Connect to localhost 9099
 
 $ wlnm -s machine1 19980    #Connect to machine1 9099
-
-
-
-wlnm&gt;&gt; use &lt;hostname&gt; 
-
- choose target machine to operate ,agent need to be started at the machine
-
-wlnm&gt;&gt; disconnect
-
- Disconnect remote wlnm daemon connection
-
-wlnm&gt;&gt; init [agentHost] [agentPort]
-
- initialise and register a agent and also fetch all related weblogic information from that machine . 
-
-wlnm&gt;&gt; lsm
-
- list all registered machine .
-
-wlnm(&lt;targethost&gt;)&gt;&gt; ls
-     List all weblogic domains with servers belong to it.
-
-wlnm(&lt;targethost&gt;)&gt;&gt; ls [domainName]
-     List weblogic domain by domain name .
-
-wlnm(&lt;targethost&gt;)&gt;&gt; lsd 
-      List weblogic all domains , not include servers  
-
-wlnm(&lt;targethost&gt;)&gt;&gt; lswls
-     List all version weblogic installation as well as nodemnager informations
-
-wlnm(&lt;targethost&gt;)&gt;&gt; lsp
-     List all running weblogic instances
-
-wlnm(&lt;targethost&gt;)&gt;&gt; init
-     This tool will search all weblogic domain at frist time use , once domain configure changed you can research weblogic 
- informations and update local store
-
-wlnm(&lt;targethost&gt;)&gt;&gt; startadmin [domainname]  
-     Start admin server by domain name  . 
-
-wlnm(&lt;targethost&gt;)&gt;&gt; start [managedserverName] 
-    start managed server by servername ,including remote server .
-
-wlnm(&lt;targethost&gt;)&gt;&gt; stop [managedserverName] 
-    stop managed server by servername ,including remote server .
-
-wlnm(&lt;targethost&gt;)&gt;&gt; kill  [port|servername] 
-    kill process of server by port or servername  
-* sometimes managed server is not able to be killed as autostart configured in weblogic domain.
-
-wlnm(&lt;targethost&gt;)&gt;&gt; nmstart [port] 
-    start node manager by port. 
-
-wlnm&gt;&gt; help
-    Show help page .
-
-wlnm&gt;&gt; quit
-    quit weblogic node master.
 </code></pre>
+
+<ol>
+<li>
+<p>Commands</p>
+
+<p>wlnm&gt;&gt; use </p>
+
+<p>choose target machine to operate ,agent need to be started at the machine</p>
+
+<p>wlnm&gt;&gt; disconnect</p>
+
+<p>Disconnect remote wlnm daemon connection</p>
+
+<p>wlnm&gt;&gt; init [agentHost] [agentPort]</p>
+
+<p>initialise and register a agent and also fetch all related weblogic information from that machine . </p>
+
+<p>wlnm&gt;&gt; lsm</p>
+
+<p>list all registered machine .</p>
+
+<p>wlnm()&gt;&gt; ls
+     List all weblogic domains with servers belong to it.</p>
+
+<p>wlnm()&gt;&gt; ls [domainName]
+     List weblogic domain by domain name .</p>
+
+<p>wlnm()&gt;&gt; lsd 
+      List weblogic all domains , not include servers  </p>
+
+<p>wlnm()&gt;&gt; lswls
+     List all version weblogic installation as well as nodemnager informations</p>
+
+<p>wlnm()&gt;&gt; lsp
+     List all running weblogic instances</p>
+
+<p>wlnm()&gt;&gt; init
+     This tool will search all weblogic domain at frist time use , once domain configure changed you can research weblogic 
+ informations and update local store</p>
+
+<p>wlnm()&gt;&gt; startadmin [domainname]<br>
+     Start admin server by domain name  . </p>
+
+<p>wlnm()&gt;&gt; start [managedserverName] 
+    start managed server by servername ,including remote server .</p>
+
+<p>wlnm()&gt;&gt; stop [managedserverName] 
+    stop managed server by servername ,including remote server .</p>
+
+<p>wlnm()&gt;&gt; kill  [port|servername] 
+    kill process of server by port or servername  </p>
+
+<ul>
+<li>sometimes managed server is not able to be killed as autostart configured in weblogic domain.</li>
+</ul>
+<p>wlnm()&gt;&gt; nmstart [port] 
+    start node manager by port. </p>
+
+<p>wlnm&gt;&gt; help
+    Show help page .</p>
+
+<p>wlnm&gt;&gt; quit
+    quit weblogic node master. ( not avaliable from web console)</p>
+</li>
+</ol>
       </section>
 
       <footer>
