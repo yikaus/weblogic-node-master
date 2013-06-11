@@ -22,6 +22,12 @@ Requirements
 3. pip if run from source
 
 
+Screen shot & Tutorials 
+-------------
+
+http://weblogicnodemaster.blogspot.com.au/
+
+
 Installation
 ------------
 
