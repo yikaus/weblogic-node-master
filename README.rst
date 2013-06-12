@@ -328,3 +328,9 @@ The tool is used as interactive command mode , you need to enter wlnm prompt the
 
 
 
+
+
+.. image:: https://d2weczhvl823v0.cloudfront.net/yikaus/weblogic-node-master/trend.png
+   :alt: Bitdeli badge
+   :target: https://bitdeli.com/free
+
