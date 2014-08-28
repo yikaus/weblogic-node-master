@@ -15,6 +15,8 @@ Changes
 
 Requirements
 -------------
+0. Linux Box , as I not tested in windows
+
 1. Weblogic Server 9,10,11 installed . Weblogic domain and nodemanager server configued 
 
 2. Python 2.6 + installed if run from source
