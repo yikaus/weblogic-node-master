@@ -22,7 +22,7 @@ setup(
     description = "Weblogic Node Master",
     license = "BSD",
     keywords = "weblogic admin administrator node manage",
-    install_requires=["psutil==0.61","bottle","Beaker"],
+    install_requires=["psutil==0.6.1","bottle","Beaker"],
     url = "https://github.com/yikaus/wlnm",   # project home page, if any
 
     # could also include long_description, download_url, classifiers, etc.
